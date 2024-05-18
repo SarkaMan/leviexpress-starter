@@ -2,20 +2,33 @@ import React, { useEffect, useState } from 'react';
 import './style.css';
 
 export const JourneyPicker = ({ onJourneyChange }) => {
-
   const [fromCity, setFromCity] = useState('');
   const [toCity, setToCity] = useState('');
   const [date, setDate] = useState('');
   const [cities, setCities] = useState([]);
+  const [dates, setDates] = useState([]);
 
-useEffect (() => {
-  const fetchCities = async () => {
-    const resp = await fetch("https://apps.kodim.cz/daweb/leviexpress/api/cities")
-    const data = await resp.json()
-    setCities(data.results)
-  }
-  fetchCities ()
-}, []);
+  useEffect(() => {
+    const fetchCities = async () => {
+      const resp = await fetch(
+        'https://apps.kodim.cz/daweb/leviexpress/api/cities',
+      );
+      const data = await resp.json();
+      setCities(data.results);
+    };
+    fetchCities();
+  }, []);
+
+  useEffect(() => {
+    const fetchDates = async () => {
+      const resp = await fetch(
+        'https://apps.kodim.cz/daweb/leviexpress/api/dates',
+      );
+      const data = await resp.json();
+      setDates(data.results);
+    };
+    fetchDates();
+  }, []);
 
   const handleChangeFromCity = (event) => {
     setFromCity(event.target.value);
@@ -43,25 +56,20 @@ useEffect (() => {
           <label>
             <div className="journey-picker__label">Odkud:</div>
             <select onChange={handleChangeFromCity} value={fromCity}>
-            <CityOptions cities={cities} />
+              <CityOptions cities={cities} />
             </select>
           </label>
-         
+
           <label>
             <div className="journey-picker__label">Kam:</div>
             <select onChange={handleChangeToCity} value={toCity}>
-             <CityOptions cities={cities} />
+              <CityOptions cities={cities} />
             </select>
           </label>
           <label>
             <div className="journey-picker__label">Datum:</div>
             <select onChange={handleChangeDate} value={date}>
-              <option value="">Vyberte</option>
-              <option value="datum01">Datum 01</option>
-              <option value="datum02">Datum 02</option>
-              <option value="datum03">Datum 03</option>
-              <option value="datum04">Datum 04</option>
-              <option value="datum05">Datum 05</option>
+              <DatesOptions dates={dates} />
             </select>
           </label>
           <div className="journey-picker__controls">
@@ -76,16 +84,31 @@ useEffect (() => {
   );
 };
 
-
-export const CityOptions = ({cities}) => {
-  console.log(cities)
+export const CityOptions = ({ cities }) => {
+  console.log(cities);
   return (
-              
-              <>
-               <option value="">Vyberte</option>
-               {cities.map((city) => (
-                <option key={city.code} value={city.code}>{city.name}</option>
-               ))};
-              </>
-            
-)};
+    <>
+      <option value="">Vyberte</option>
+      {cities.map((city) => (
+        <option key={city.code} value={city.code}>
+          {city.name}
+        </option>
+      ))}
+      ;
+    </>
+  );
+};
+
+export const DatesOptions = ({ dates }) => {
+  return (
+    <>
+      <option value="">Vyberte</option>
+      {dates.map((date) => (
+        <option key={date.dateBasic} value={date.dateBasic}>
+          {date.dateCs}
+        </option>
+      ))}
+      ;
+    </>
+  );
+};
